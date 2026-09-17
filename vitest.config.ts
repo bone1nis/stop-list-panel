@@ -6,7 +6,16 @@ import { defineConfig } from "vitest/config";
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: "svg",
+      load(id: string) {
+        if (!id.endsWith(".svg")) return;
+        return "export default function Svg() { return null }";
+      },
+    },
+  ],
   resolve: {
     alias: {
       "@": path.join(rootDir, "src"),
