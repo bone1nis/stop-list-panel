@@ -9,6 +9,7 @@ import {
   type RefObject,
 } from "react";
 import { createPortal } from "react-dom";
+import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/shared/lib/cn";
 
 const ModalContext = createContext<{
@@ -73,12 +74,16 @@ export function Modal({
 
 function ModalOverlay() {
   const { onClose } = useModal();
+  const reduceMotion = useReducedMotion();
   return (
-    <button
+    <motion.button
       type="button"
       className="absolute inset-0 cursor-pointer bg-[#171512]/40"
       aria-label="Закрыть"
       onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: reduceMotion ? 0 : 0.18 }}
     />
   );
 }
@@ -95,21 +100,25 @@ function ModalContent({
   describedBy?: string;
 }) {
   const { contentRef } = useModal();
+  const reduceMotion = useReducedMotion();
   return (
-    <div
+    <motion.div
       ref={contentRef}
       role="dialog"
       aria-modal="true"
       aria-labelledby={labelledBy}
       aria-describedby={describedBy}
       tabIndex={-1}
+      initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.2 }}
       className={cn(
         "relative z-10 flex max-h-[min(90dvh,40rem)] w-full max-w-md flex-col overflow-hidden rounded-xl border border-[#e4ded4] bg-white shadow-xl outline-none",
         className,
       )}
     >
       {children}
-    </div>
+    </motion.div>
   );
 }
 

@@ -160,8 +160,7 @@ export function Select({
           aria-labelledby={buttonId}
           className={cn(
             "mt-1 overflow-hidden rounded-lg border border-[#e4ded4] bg-white py-1",
-            overlay &&
-              "absolute top-full left-0 z-20 w-full shadow-lg",
+            overlay && "absolute top-full left-0 z-20 w-full shadow-lg",
           )}
         >
           {options.map((option, index) => (

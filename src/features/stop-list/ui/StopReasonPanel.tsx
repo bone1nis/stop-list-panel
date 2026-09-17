@@ -177,7 +177,7 @@ export function StopReasonPanel({
 
           <div className="flex gap-2 border-t border-[#e4ded4] bg-white px-5 py-4">
             <Button type="submit" loading={loading}>
-              {loading ? "Сохранение…" : "Сохранить"}
+              Сохранить
             </Button>
             <Button type="button" variant="ghost" onClick={onClose}>
               Отмена

@@ -1,3 +1,6 @@
+"use client";
+
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Button } from "./Button";
 
 interface ToastItem {
@@ -12,7 +15,8 @@ export function Toast({
   toasts: ToastItem[];
   onDismiss: (id: string) => void;
 }) {
-  if (toasts.length === 0) return null;
+  const reduceMotion = useReducedMotion();
+  const duration = reduceMotion ? 0 : 0.18;
 
   return (
     <div
@@ -21,22 +25,28 @@ export function Toast({
       aria-label="Уведомления"
       aria-live="assertive"
     >
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className="rounded-lg border border-accent/20 bg-white p-3 text-sm text-foreground shadow-lg"
-          role="alert"
-        >
-          <p>{toast.message}</p>
-          <Button
-            variant="ghost"
-            className="mt-2 h-8 px-2 text-xs"
-            onClick={() => onDismiss(toast.id)}
+      <AnimatePresence>
+        {toasts.map((toast) => (
+          <motion.div
+            key={toast.id}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: reduceMotion ? 0 : 8 }}
+            transition={{ duration }}
+            className="rounded-lg border border-accent/20 bg-white p-3 text-sm text-foreground shadow-lg"
+            role="alert"
           >
-            Закрыть
-          </Button>
-        </div>
-      ))}
+            <p>{toast.message}</p>
+            <Button
+              variant="ghost"
+              className="mt-2 h-8 px-2 text-xs"
+              onClick={() => onDismiss(toast.id)}
+            >
+              Закрыть
+            </Button>
+          </motion.div>
+        ))}
+      </AnimatePresence>
     </div>
   );
 }

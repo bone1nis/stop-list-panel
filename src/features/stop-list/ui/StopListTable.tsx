@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "motion/react";
 import type { MenuItem } from "@/entities/menu-item";
 import {
   shopLabels,
@@ -34,10 +35,20 @@ export function StopListTable({
   onSelect,
   onResume,
 }: StopListTableProps) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div className="overflow-x-auto rounded-xl border border-[#e4ded4] bg-white">
-      <table className="w-full min-w-[960px] text-left text-sm">
+      <table className="w-full min-w-[960px] table-fixed text-left text-sm">
         <caption className="sr-only">Позиции стоп-листа</caption>
+        <colgroup>
+          <col className="w-[18%]" />
+          <col className="w-[12%]" />
+          <col className="w-[8%]" />
+          <col className="w-[14%]" />
+          <col className="w-[24%]" />
+          <col className="w-[24%]" />
+        </colgroup>
         <thead className="border-b border-[#e4ded4] bg-[#faf7f2] text-xs tracking-wide text-[#5c574e] uppercase">
           <tr>
             <th scope="col" className="px-4 py-3 font-medium">
@@ -66,41 +77,44 @@ export function StopListTable({
             const pending = pendingIds.includes(item.id);
             const resumeDisabled = item.stock === 0;
             return (
-              <tr
+              <motion.tr
                 key={item.id}
+                initial={false}
+                animate={{ opacity: stopped ? 0.55 : 1 }}
+                transition={{ duration: reduceMotion ? 0 : 0.2 }}
                 className={cn(
                   "border-b border-[#f0ebe3] last:border-0",
-                  stopped && "opacity-55",
                   selectedId === item.id && "bg-accent/5",
                 )}
               >
-                <td className="px-4 py-3 font-medium">{item.title}</td>
-                <td className="px-4 py-3">{shopLabels[item.shop]}</td>
+                <td className="truncate px-4 py-3 font-medium">{item.title}</td>
+                <td className="truncate px-4 py-3">{shopLabels[item.shop]}</td>
                 <td className="px-4 py-3">{item.stock}</td>
                 <td className="px-4 py-3">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge muted={!stopped}>
-                      {statusFilterLabels[item.status.kind]}
-                    </Badge>
-                    {pending ? <Badge>сохраняется</Badge> : null}
-                  </div>
+                  <Badge muted={!stopped}>
+                    {statusFilterLabels[item.status.kind]}
+                  </Badge>
                 </td>
                 <td className="px-4 py-3 text-[#5c574e]">
-                  {item.status.kind === "stopped" ? (
-                    <>
-                      {stopReasonLabels[item.status.reason]}
-                      <span className="block text-xs">
-                        {formatUntil(item.status.until)}
-                      </span>
-                    </>
-                  ) : (
-                    "—"
-                  )}
+                  <span className="block min-h-10">
+                    {item.status.kind === "stopped" ? (
+                      <>
+                        {stopReasonLabels[item.status.reason]}
+                        <span className="block text-xs">
+                          {formatUntil(item.status.until)}
+                        </span>
+                      </>
+                    ) : (
+                      "—"
+                    )}
+                  </span>
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-2">
                     <Button
                       variant="ghost"
+                      className="w-[6.75rem]"
+                      loading={pending}
                       aria-label={
                         stopped
                           ? `Изменить стоп: ${item.title}`
@@ -110,24 +124,27 @@ export function StopListTable({
                     >
                       {stopped ? "Изменить" : "В стоп"}
                     </Button>
-                    {stopped ? (
-                      <Button
-                        variant="danger"
-                        disabled={resumeDisabled}
-                        title={
-                          resumeDisabled
-                            ? "Нельзя вернуть в продажу: остаток 0"
-                            : undefined
-                        }
-                        aria-label={`Вернуть в продажу: ${item.title}`}
-                        onClick={() => onResume(item.id)}
-                      >
-                        Вернуть в продажу
-                      </Button>
-                    ) : null}
+                    <Button
+                      variant="danger"
+                      className={cn("w-[11.5rem]", !stopped && "invisible")}
+                      disabled={!stopped || resumeDisabled || pending}
+                      tabIndex={stopped ? undefined : -1}
+                      aria-hidden={!stopped}
+                      title={
+                        resumeDisabled
+                          ? "Нельзя вернуть в продажу: остаток 0"
+                          : undefined
+                      }
+                      aria-label={
+                        stopped ? `Вернуть в продажу: ${item.title}` : undefined
+                      }
+                      onClick={() => onResume(item.id)}
+                    >
+                      Вернуть в продажу
+                    </Button>
                   </div>
                 </td>
-              </tr>
+              </motion.tr>
             );
           })}
         </tbody>
