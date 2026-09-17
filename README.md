@@ -9,6 +9,7 @@
 ```bash
 npm install
 npm run dev
+npm run build
 ```
 
 или
@@ -16,6 +17,7 @@ npm run dev
 ```bash
 pnpm install
 pnpm dev
+pnpm build
 ```
 
 Открыть [http://localhost:3000](http://localhost:3000).
