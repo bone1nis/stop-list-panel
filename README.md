@@ -2,6 +2,8 @@
 
 Один экран для менеджера смены: меню, фильтры по цеху и статусу, постановка позиции в стоп и возврат в продажу. Бэкенда нет — данные в памяти процесса, API — route handlers.
 
+Превью: [stop-list-panel-kappa.vercel.app](https://stop-list-panel-kappa.vercel.app/).
+
 ## Запуск
 
 Нужен Node 22 (см. `.nvmrc`).
